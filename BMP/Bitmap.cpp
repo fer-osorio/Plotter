@@ -1,5 +1,4 @@
 #include"Bitmap.hpp"
-#include <cmath>
 
 using namespace std;
 
@@ -131,7 +130,7 @@ void Bitmap::moveTo(int x, int y) {
 void Bitmap::lineTo(RGB color, int x, int y) {
     // Using y = mx+b equation.
     int x1, x2, y1, y2;
-    int i, j, k;
+    int i, j;
     double b, m;
 
     // -Setting starting and end point.
@@ -190,23 +189,10 @@ void Bitmap::lineTo(RGB color, int x, int y) {
     X = x; Y = y;
 }
 
-double Bitmap::f(double x) {
-    return sin(x) * cos(3.14159*x);
-    //return (16-x*x)*sin(x*x);
-}
-
-double Bitmap::f(double x, double y) {
-    /*double fxy = x*x + y*y;
-    if(fxy <= 1) return sqrt(1 - fxy);
-    else return 0;*/
-    //return x*x + y*y;
-    return sin(x*x + y*y);
-}
-
-void Bitmap::graphfx(const RGB &color, double a, double b) {
+void Bitmap::graphfx(const RGB &color, double a, double b, FUNCTION1 f) {
     double *fx, deltaX;
     double x, max, min;
-    int i, j, k;
+    int i, j;
     fx = new double[ih.Width];
     deltaX = (b - a) / ih.Width;
     for(i = 0, x = a; i < ih.Width; i++, x += deltaX) {
@@ -232,12 +218,12 @@ void Bitmap::graphfx(const RGB &color, double a, double b) {
     delete[] fx;
 }
 
-void Bitmap::graphfxy(double ax, double ay, double bx, double by) {
+void Bitmap::graphfxy(double ax,double ay,double bx,double by,FUNCTION2 f) {
     RGB color(0,0,0);
     double **fxy, deltaX, deltaY;
     double x, y, max, min;
-    int i, j, k;
-    int RED = 0xFF, GREEN = RED << 8, BLUE = GREEN << 8;
+    int i, j;
+    //int RED = 0xFF, GREEN = RED << 8, BLUE = GREEN << 8;
 
     fxy = new double*[ih.Height];
     for(i = 0; i < ih.Height; i++) fxy[i] = new double[ih.Width];
@@ -258,19 +244,19 @@ void Bitmap::graphfxy(double ax, double ay, double bx, double by) {
     x = max - min;
     for(i = 0; i < ih.Height; i++) {
         for(j = 0; j < ih.Width; j++) {
-            //fxy[i][j] = (fxy[i][j] - min) * 255.0 / x;
-            fxy[i][j] = (fxy[i][j] - min) * 0xFFFFFF / x;
+            fxy[i][j] = (fxy[i][j] - min) * 255.0 / x;
+            //fxy[i][j] = (fxy[i][j] - min) * 0xFFFFFF / x;
         }
     }
     // -Drawing f graph.
     for(i = 0; i < ih.Height; i++) {
         for(j = 0; j < ih.Width; j++) {
-            color.red   =  RED   & (int)fxy[i][j];
+            /*color.red   =  RED   & (int)fxy[i][j];
             color.green = (GREEN & (int)fxy[i][j]) >> 8;
-            color.blue  = (BLUE  & (int)fxy[i][j]) >> 16;
-            /*color.red     = fxy[i][j] * 0.5;
+            color.blue  = (BLUE  & (int)fxy[i][j]) >> 16;*/
+            color.red     = fxy[i][j] * 0.5 + 126;
             color.green   = fxy[i][j];
-            color.blue    = fxy[i][j];*/
+            color.blue    = fxy[i][j];
             img[i][j] = color;
         }
     }

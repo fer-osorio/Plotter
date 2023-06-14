@@ -1,4 +1,10 @@
 #include <fstream>
+#include <cmath>
+
+// -Define type pointer to function double (double).
+typedef double (*FUNCTION1)(double);
+// -Define type pointer to function double (double,double).
+typedef double (*FUNCTION2)(double,double);
 
 using namespace std;
 
@@ -64,17 +70,11 @@ public:
 	//  with (x,y), i.e. (Y,Y) <- (x,y).
     void lineTo(RGB color, int x, int y);
 
-    // -Function R -> R.
-    double f(double x);
-
-    // -Function R^2 -> R.
-    double f(double x, double y);
-
 	// -Graph of the f function.
-    void graphfx(const RGB &color, double a, double b);
+    void graphfx(const RGB &color, double a, double b, FUNCTION1 f);
 
     // -Graph of the f function.
-    void graphfxy(double ax, double ay, double bx, double by);
+    void graphfxy(double ax, double ay, double bx, double by, FUNCTION2 f);
 
     friend ostream& operator << (ostream &stream, const Bitmap &bmp);
 };
