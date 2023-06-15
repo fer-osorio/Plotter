@@ -7,7 +7,7 @@ using namespace std;
 ExpressionReader::ExpressionReader(const char* function) :
 infixIndex(0), postfixIndex(0), syntaxError(NULL) {
     int len = 0, i = 0;
-
+    twoVar = false;
     // Length of the array, not of the string.
     while(function[len++] != 0);
 
@@ -138,6 +138,10 @@ void ExpressionReader::operator()(const char* function) {
     } catch(const char* e) {
         cout << e;
     }
+}
+
+bool ExpressionReader::hasTwoVar() {
+    return twoVar;
 }
 
 bool ExpressionReader::precedence(char a, char b) {
@@ -322,6 +326,7 @@ void ExpressionReader::Factor() {
     }
     // -Second case: Variable.
     if(infix[infixIndex] == 'x' || infix[infixIndex] == 'y') {
+        if(infix[infixIndex] == 'y') twoVar = true;
         postfix[postfixIndex++] = infix[infixIndex++];
         return ;
     }

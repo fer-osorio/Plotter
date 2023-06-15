@@ -19,10 +19,22 @@
  */
 
 #include <iostream>
-#include <cstdlib>
+#include "BMP/Bitmap.hpp"
+#include "ExpressionReader/ExpressionReader.hpp"
 
-int
-main ()
+class Plotter : private Bitmap, private ExpressionReader {
+public:
+    Plotter(const char *function, int width, int height = -1)
+    :ExpressionReader(function), Bitmap(width, height) {}
+
+    void plot() {
+        bool xy = hasTwoVar();
+
+        //if(xy)
+    }
+};
+
+int main ()
 {
   std::cout << "Hello, World!\n";
   return EXIT_SUCCESS;

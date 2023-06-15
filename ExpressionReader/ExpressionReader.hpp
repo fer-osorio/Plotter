@@ -21,6 +21,9 @@ class ExpressionReader {
 	// -Exception message.
 	char *syntaxError;
 
+	// -Function of one or two variables.
+	bool twoVar;
+
 public:
 	// -Default constructor; initializes infix and postfix as NULL.
 	ExpressionReader(const char* function);
@@ -35,6 +38,10 @@ public:
 
 	// -Taking an expression and saving it together with its postfix form.
 	void operator()(const char* function);
+
+	// -Tells us if the function has two variables or just one.
+	bool hasTwoVar();
+
 	// -Evaluating expression on (x,y)
 	double evaluate(double x = 0, double y = 0, bool showProcess = false);
 
