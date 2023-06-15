@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Bitmap::Bitmap(const char* fname) : X(0), Y(0) {
+Bitmap::Bitmap(const char* fname, const char* function) :
+X(0), Y(0), ExpressionReader(function) {
     ifstream file;
     file.open(fname, ios::binary);
     int i, j;
@@ -42,7 +43,8 @@ Bitmap::Bitmap(const char* fname) : X(0), Y(0) {
     }
 }
 
-Bitmap::Bitmap(int width, int height) : X(0), Y(0) {
+Bitmap::Bitmap(int width, const char* function, int height) :
+X(0), Y(0), ExpressionReader(function){
     int i, j, h, w = width, s;
     w -= w % 4;
     h = height;
@@ -71,7 +73,7 @@ Bitmap::Bitmap(int width, int height) : X(0), Y(0) {
 
     // -Matrix of dimension (ih.Height, ih.Width) where
     //  each of its elements is 'RGB color' of 3 bytes.
-    for(i = 0; i < ih.SizeOfBitmap; i++) data[i] = 0xFF;
+    for(i = 0; i < ih.SizeOfBitmap; i++) data[i] = 0x00;
 
     img = new RGB*[h];
     for(i = h - 1, j = 0; i >= 0; i--, j++) {
@@ -189,6 +191,10 @@ void Bitmap::lineTo(RGB color, int x, int y) {
     X = x; Y = y;
 }
 
+bool Bitmap::has_xy() {
+    return hasTwoVar();
+}
+
 void Bitmap::graphfx(const RGB &color, double a, double b, FUNCTION1 f) {
     double *fx, deltaX;
     double x, max, min;
@@ -196,7 +202,16 @@ void Bitmap::graphfx(const RGB &color, double a, double b, FUNCTION1 f) {
     fx = new double[ih.Width];
     deltaX = (b - a) / ih.Width;
     for(i = 0, x = a; i < ih.Width; i++, x += deltaX) {
-        fx[i] = f(x);
+        if(f == NULL) {
+            try {
+                fx[i] = evalOn_x(x);
+            } catch(const char* e) {
+                fx[i] = 0;
+                cout << e << endl;
+                //throw ;
+            }
+        }
+        else fx[i] = f(x);
     }
     max = min = fx[0];
     for(i = 0; i < ih.Width; i++) {
@@ -231,8 +246,17 @@ void Bitmap::graphfxy(double ax,double ay,double bx,double by,FUNCTION2 f) {
     deltaX = (bx - ax) / ih.Width;
     deltaY = (by - ay) / ih.Height;
     for(i = 0, y = ay; i < ih.Height; i++, y += deltaY)
-        for(j = 0, x = ax; j < ih.Width; j++, x += deltaX)
-            fxy[i][j] = f(x,y);
+        for(j = 0, x = ax; j < ih.Width; j++, x += deltaX) {
+            if(f == NULL) {
+                try {
+                    fxy[i][j] = evaluate(x,y);
+                } catch(const char* e) {
+                    fxy[i][j] = 0;
+                    //throw ;
+                }
+            }
+            else fxy[i][j] = f(x,y);
+        }
 
     max = min = fxy[0][0];
     for(i = 0; i < ih.Height; i++) {

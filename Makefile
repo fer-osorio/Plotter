@@ -5,9 +5,10 @@ WARNINGS = -Wall -Weffc++ -Wextra -Wsign-conversion -pedantic-errors
 DEBUG = -ggdb -fno-omit-frame-pointer
 OPTIMIZE = -O2
 STANDARD = -std=c++2a
+SOURCE = Plotter.cpp ExpressionReader/ExpressionReader.cpp BMP/Bitmap.cpp
 
-Plotter: Makefile main.cpp
-	$(CXX) -o $@ $(WARNINGS) $(DEBUG) $(OPTIMIZE) $(STANDARD) main.cpp
+Plotter: Makefile $(SOURCE)
+	$(CXX) -o $@ $(WARNINGS) $(DEBUG) $(OPTIMIZE) $(STANDARD) $(SOURCE)
 
 clean:
 	rm -f Plotter

@@ -43,7 +43,10 @@ public:
 	bool hasTwoVar();
 
 	// -Evaluating expression on (x,y)
-	double evaluate(double x = 0, double y = 0, bool showProcess = false);
+	double evaluate(double x = 0, double y = 0);
+
+	// -Evaluates the function just on x, leaving y as 0.
+	double evalOn_x(double x);
 
 private:
 

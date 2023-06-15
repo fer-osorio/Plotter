@@ -118,7 +118,7 @@ void ExpressionReader::printPostfixln() {
 
 void ExpressionReader::operator()(const char* function) {
     int len = 0, i = 0;
-    while(function[len++] != 0); // Length of the array, not of the string.
+    while(function[len++] != 0) {} // Length of the array, not of the string.
 
     // -In case of having an old expression.
     if(infix != NULL) delete[] infix;
@@ -361,7 +361,7 @@ void ExpressionReader::Factor() {
         (infix[infixIndex] > 96 && infix[infixIndex] < 123) ) {
         Name(); return;
     }
-    syntaxErrorMsg("Invalid character...");
+    syntaxErrorMsg("Expected a digit, variable, parenthesis or a name...");
     throw syntaxError;
 }
 
@@ -442,9 +442,12 @@ int index) {
         destination[index] = origin[i];
 }
 
-double ExpressionReader::evaluate(double x, double y, bool showProcess) {
+double ExpressionReader::evaluate(double x, double y) {
     Pila<double> values;
     double tmp = 0;
+
+    // -Debugging purposes.
+    bool showProcess = false;
 
     int poslen = -1;
     while(postfix[++poslen] != 0) {}
@@ -552,12 +555,21 @@ double ExpressionReader::evaluate(double x, double y, bool showProcess) {
             case '/':
                 a = values.pop();
                 b = values.pop();
-                if(b == 0) throw "Division by zero...";
-                values.push(a / b); ++i;
+                if(a == 0) throw "Division by zero...";
+                values.push(b / a); ++i;
                 if(showProcess) evaluationState(i);
                 break;
         }
     }
     return values.pop();
+}
+
+double ExpressionReader::evalOn_x(double x) {
+    double r;
+    try {r = evaluate(x,0);}
+    catch(const char* e) {
+        throw ;
+    }
+    return r;
 }
 

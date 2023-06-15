@@ -20,22 +20,71 @@
 
 #include <iostream>
 #include "BMP/Bitmap.hpp"
-#include "ExpressionReader/ExpressionReader.hpp"
 
-class Plotter : private Bitmap, private ExpressionReader {
+using namespace std;
+
+class Plotter : private Bitmap {
 public:
-    Plotter(const char *function, int width, int height = -1)
-    :ExpressionReader(function), Bitmap(width, height) {}
+    Plotter(const char *function, int width, int height = -1) :
+    Bitmap(width, function, height), xy(has_xy()) {}
 
-    void plot() {
-        bool xy = hasTwoVar();
+    bool xy;
 
-        //if(xy)
+    void plot(double ax, double ay , double bx = 0, double by = 0) {
+        RGB color(0xFF, 0xFF, 0xFF);
+        char fname[] = "/home/alexisfernandoosoriosarabio/Projects/Plotter/"
+                       "Plot.bmp";
+        if(xy) {
+            //try {
+                graphfxy(ax, ay, bx, by);
+            //} catch(const char* e) {
+                //cout << e << endl;
+                //throw ;
+            //}
+        }
+        else {
+            //try {
+                graphfx(color, ax, ay);
+            //} catch(const char* e) {
+                //cout << e << endl;
+                //throw ;
+            //}
+        }
+        save(fname);
     }
 };
 
 int main ()
 {
-  std::cout << "Hello, World!\n";
-  return EXIT_SUCCESS;
+    int i = 0;
+    char exp[100], bf;
+    double ax = -1, ay = -1, bx = 1, by = 1;
+
+    cout << "\nEnter the function to plot:\n";
+    while((bf = getchar()) != '\n') {
+        if(bf != ' ') {
+            if(bf == '=') i = 0;
+            else exp[i++] = bf;
+        }
+    }
+    exp[i] = 0;
+    Plotter plotter(exp, 1024);
+
+    cout << "\nEnter the plotting domain:\n";
+    if(plotter.xy) {
+        cout << "\nax = ";
+        cin >> ax;
+        cout << "\nay = ";
+        cin >> ay;
+        cout << "\nbx = ";
+        cin >> bx;
+        cout << "\nby = ";
+        cin >> by;
+    } else {
+        cout << "\na = ";
+        cin >> ax;
+        cout << "\nb = ";
+        cin >> ay;
+    }
+    plotter.plot(ax, ay, bx, by);
 }
