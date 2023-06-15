@@ -20,12 +20,20 @@ infixIndex(0), postfixIndex(0), syntaxError(NULL) {
         postfix[i + len] = 0;
     }
 
+    constantsNum = 0;
+    constants = NULL;
+    isDefined = NULL;
     try {
         Expression();
     } catch(const char* e) {
         cout << e << '\n';
         throw;
     }
+    if(constantsNum > 0) {
+        constants = new double[constantsNum];
+        isDefined = new bool[constantsNum];
+    }
+    for(i = 0; i < constantsNum; i++) isDefined[i] = false;
 }
 
 ExpressionReader::~ExpressionReader() {
@@ -68,6 +76,14 @@ void ExpressionReader::cleanMemory() {
     if(syntaxError != NULL) {
         delete[] syntaxError;
         syntaxError = NULL;
+    }
+    if(constants != NULL) {
+        delete[] constants;
+        constants = NULL;
+    }
+    if(isDefined != NULL) {
+        delete[] isDefined;
+        isDefined = NULL;
     }
 }
 
@@ -405,6 +421,7 @@ void ExpressionReader::Name() {
             postfix[postfixIndex++] = infix[infixIndex++];
         }
         postfix[postfixIndex++] = '}';
+        constantsNum++;
     }
 }
 
@@ -444,6 +461,7 @@ int index) {
 
 double ExpressionReader::evaluate(double x, double y) {
     Pila<double> values;
+    int constCount = 0;
     double tmp = 0;
 
     // -Debugging purposes.
@@ -508,12 +526,19 @@ double ExpressionReader::evaluate(double x, double y) {
 
         // -Third case : Constants
         if(postfix[i] == '{') {
-            cout << "\n Define the value of: ";
-            while(postfix[i++] != '}') cout << postfix[i];
-            cout << " = ";
-            cin >> tmp;
-            values.push(tmp);
-            if(showProcess) evaluationState(i);
+            if(!isDefined[constCount]) {
+                cout << "\n Define the value of: ";
+                while(postfix[i++] != '}') {
+                    if(postfix[i] != '}') cout << postfix[i];
+                }
+                cout << " = ";
+                cin >> constants[constCount];
+                if(showProcess) evaluationState(i);
+                isDefined[constCount] = true;
+            } else {
+                while(postfix[i++] != '}') {}
+            }
+            values.push(constants[constCount++]);
         }
 
         // -Fourth case: functions

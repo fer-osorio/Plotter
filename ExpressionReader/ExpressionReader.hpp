@@ -12,6 +12,11 @@ class ExpressionReader {
 	const char* funcNames[6] = {"sin", "cos", "tan", "log",  "ln", "sqrt"};
 	FUNCTION    functions[6] = {&sin,  &cos,  &tan,  &log10, &log, &sqrt};
 
+	// -Constants defined
+	int constantsNum;
+	double *constants;
+	bool *isDefined;
+
 	int numFunc = 6;
 
 	// -When analyzing the strings, well need to know where we are.
