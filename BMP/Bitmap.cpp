@@ -32,6 +32,7 @@ X(0), Y(0), ExpressionReader(function) {
 
             // -Matrix of dimension (ih.Height, ih.Width) where
             //  each of its elements is 'RGB color' of 3 bytes.
+            img = new RGB*[ih.Height];
             for(i = ih.Height - 1, j = 0; i >= 0; i--, j++) {
                 img[j] = (RGB*)&data[3 * i * ih.Width];
             }
